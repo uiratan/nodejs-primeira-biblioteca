@@ -1,17 +1,60 @@
 import fs from 'fs';
 import chalk from 'chalk';
 
-function pegaArquivo(caminhoDoArquivo) {
-  const encoding = 'utf-8';
-  // caminho, encoding, função de callback realizada com o resultado do
-  // readFile. essa função recebe 2 parametros: erro caso aconteça e 
-  // o proprio contudo do arquivo
-  fs.readFile(caminhoDoArquivo, encoding, (_, texto) => {
-    console.log(chalk.green(texto));
-  });
+function trataErro(erro) {
+  console.log(erro);
+  throw new Error(chalk.red(erro.code, 'arquivo inexistente'));
 }
 
-pegaArquivo('./arquivos/texto.md');
+// função assíncrona com async/await
+// async é para informar que DENTRO da função vai existir código assíncrono
+// permite usar try/catch
+async function pegaArquivo(caminhoDoArquivo) {
+  const encoding = 'utf-8';
+  try {
+    const texto = await fs.promises.readFile(caminhoDoArquivo, encoding)
+    console.log(chalk.green(texto))
+  } catch(erro) {
+    trataErro(erro);
+  } finally {
+    console.log(chalk.yellow('operação concluída'));
+  }
+ }
+
+await pegaArquivo('./arquivos/texto.md');
+
+pegaArquivo('./arquivos/texto.mdx');
+
+
+// função assíncrona com then
+// function pegaArquivo(caminhoDoArquivo) { 
+//   const encoding = 'utf-8';
+//   fs.promises
+//     .readFile(caminhoDoArquivo, encoding)
+//     .then((texto) => console.log(chalk.green(texto)))
+//     // .catch((erro) => trataErro(erro));
+//     // como catch é uma função que recebe outra função como 
+//     // parametro, basta passar como abaixo
+//     .catch(trataErro);
+// }
+
+// funcção síncrona
+// function pegaArquivo(caminhoDoArquivo) {
+//   const encoding = 'utf-8';
+//   // caminho, encoding, função de callback realizada com o resultado do
+//   // readFile. essa função recebe 2 parametros: erro caso aconteça e 
+//   // o proprio contudo do arquivo
+//   fs.readFile(caminhoDoArquivo, encoding, (erro, texto) => {
+//     if (erro) {
+//       trataErro(erro);
+//       //console.log(erro);
+//     }
+
+//     console.log(chalk.green(texto));
+//   });
+// }
+
+
 
 
 

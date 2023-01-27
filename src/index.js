@@ -1,3 +1,8 @@
+// regex
+// capturar as expressoes em [] - \[[^[\]]*?\]
+// capturar oq estiver entre () que seja link http/https - \(https?:\/\/[^\s?#.].[^\s]*\)
+// expressao completa usando grupos - \[([^[\]]*?)\]\((https?:\/\/[^\s?#.].[^\s]*)\)
+
 import fs from 'fs';
 import chalk from 'chalk';
 
@@ -11,7 +16,7 @@ function extraiLinks(texto) {
     [captura[1]]: captura[2]
   })
   )
-  return resultados;
+  return resultados.length !== 0 ? resultados : 'não há links no arquivo';
 }
 
 function trataErro(erro) {
@@ -24,19 +29,10 @@ async function pegaArquivo(caminhoDoArquivo) {
   try {
     const encoding = 'utf-8';
     const texto = await fs.promises.readFile(caminhoDoArquivo, encoding)
-    // console.log(chalk.green(texto));
-    console.log(extraiLinks(texto));
+    return extraiLinks(texto);  
   } catch (erro) {
     trataErro(erro)
   }
 }
 
-pegaArquivo('./arquivos/texto.md');
-// pegaArquivo('./arquivos/');
-
-
-
-// regex
-// capturar as expressoes em [] - \[[^[\]]*?\]
-// capturar oq estiver entre () que seja link http/https - \(https?:\/\/[^\s?#.].[^\s]*\)
-// expressao completa usando grupos - \[([^[\]]*?)\]\((https?:\/\/[^\s?#.].[^\s]*)\)
+export default pegaArquivo;
